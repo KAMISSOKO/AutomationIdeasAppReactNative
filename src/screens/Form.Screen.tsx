@@ -152,55 +152,6 @@ const FormScreen = ({ navigation }: any) => {
                                     })
                                 }
                             </View>
-                            {/* <View>
-                                <Text style={ styles.fields }>{ autorNameTitle }</Text>
-                                <TextInput 
-                                    style={styles.input} 
-                                    value={autorName} 
-                                    onChangeText={onAutorNameChange} 
-                                    placeholder="Saisir votre nom"
-                                    placeholderTextColor="#8b959e" 
-                                    focusable={true}
-                                />
-                                <Text style={ styles.fields }>{ autorFirstNameTitle }</Text>
-                                <TextInput 
-                                    style={styles.input} 
-                                    value={autorFirstName} 
-                                    onChangeText={onAutorFirstNameChange} 
-                                    placeholder="Saisir votre prénom"
-                                    placeholderTextColor="#8b959e" 
-                                    focusable={true}
-                                />
-                                <Text style={ styles.fields }>{ autorEmailTitle }</Text>
-                                <TextInput 
-                                    style={styles.input} 
-                                    value={autorEmail} 
-                                    onChangeText={onAutorEmailChange} 
-                                    placeholder="Saisir votre email"
-                                    placeholderTextColor="#8b959e" 
-                                    focusable={true}
-                                />
-                                <Text style={ styles.fields }>{ projectNameTitle }</Text>
-                                <TextInput 
-                                    style={styles.input} 
-                                    value={projectName} 
-                                    onChangeText={onProjectNameChange} 
-                                    placeholder="Saisir le nom de votre idée"
-                                    placeholderTextColor="#8b959e" 
-                                    focusable={true}
-                                />
-                                <Text style={ styles.fields }>{ projectDescriptionTitle }</Text>
-                                <TextInput 
-                                    style={styles.textArea} 
-                                    value={projectDescription} 
-                                    onChangeText={onProjectDescriptionChange} 
-                                    placeholder="Saisir une description de votre projet"
-                                    placeholderTextColor="#8b959e" 
-                                    focusable={true}
-                                    multiline={true}
-                                    numberOfLines={10}
-                                />
-                            </View> */}
                         </ScrollView>        
                     </View>
                     <TouchableOpacity onPress={onSubmit}>
