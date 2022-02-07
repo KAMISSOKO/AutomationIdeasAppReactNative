@@ -23,13 +23,10 @@ const HomeScreen = ({ navigation }: any) => {
                 <SafeAreaView>
                     <View style={ styles.homeContainer }>
                         <Image source={ require("../assets/foncia-logo.png") } style={ styles.image } />
-                        {/* <Text style={ styles.title }>
-                            Automation Ideas App
-                        </Text> */}
                         <Text style={ styles.subTitle }>
                             Créer une idée d'automatisation avec simplicité !
                         </Text>
-                        <TouchableWithoutFeedback onPress={() => navigateTo('Form')}>
+                        <TouchableOpacity onPress={() => navigateTo('Form')}>
                             <View style={ styles.getStartedButtonContainer }>
                                 <View>
                                     <Text style={ styles.getStartedButtonText }>Créer une idée d'automatisation</Text>
@@ -38,7 +35,7 @@ const HomeScreen = ({ navigation }: any) => {
                                     <Ionicons name="arrow-forward" color="#ffffff" size={30} />
                                 </View>
                             </View>
-                        </TouchableWithoutFeedback>
+                        </TouchableOpacity>
                     </View>
                 </SafeAreaView>
             </View>
@@ -57,17 +54,12 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'space-around',
         alignItems: "center",
-        margin: 10,
+        margin: 5,
         marginTop: 50,
         padding: 10,
-        height: 650,
+        height: "90%",
         borderRadius: 10,
         backgroundColor: "#ffffff",
-    },
-    title: {
-        fontSize: 30,
-        color: "#000000",
-        fontWeight: "800",
     },
     subTitle: {
         fontSize: 20,
@@ -86,18 +78,19 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 4,
-        borderColor: "#20232a",
+        width: "90%",
         backgroundColor: "#15151c",
         borderRadius: 10,
-        padding: 7
+        padding: 10
     },
     getStartedButtonText: {
         color: "#ffffff",
-        fontWeight: "600"
+        fontWeight: "600",
+        marginRight: 20,
+
     },
     iconContainer: {
-        marginLeft: 5,
+        marginLeft: 35,
         color: "#ffffff",
     },
 });
