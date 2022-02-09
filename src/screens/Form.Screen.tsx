@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
+import * as DocumentPicker from 'expo-document-picker';
 
 // Infterface
 import { Project } from '../interfaces/Project';
@@ -21,18 +22,23 @@ import { Project } from '../interfaces/Project';
 // Component
 import Separator from '../components/Separator';
 
+// Service 
+import { SubmitFormDataService } from '../services/SubmitFormDataService';
+
 // Form variables
 import * as formVariables from "../exports/formVariables";
+import { Attachment } from '../interfaces/Attachment';
 
 const FormScreen = ({ navigation }: any) => {
-    const [project, setProject] = useState<string>("");
     const [autorName, setAutorName] = useState<string>("");
     const [autorFirstName, setAutorFirstName] = useState<string>("");
     const [autorEmail, setAutorEmail] = useState<string>("");
     const [projectName, setProjectName] = useState<string>("");
     const [projectDescription, setProjectDescription] = useState<string>("");
-    const axiosInstance = axios.create({
-        baseURL: 'http://172.20.10.2:3030'
+    const [attachment, setAttachment] = useState<Attachment>({
+        name: "",
+        type: "",
+        uri: ""
     });
 
     const onAutorNameChange = (e: React.SetStateAction<string>) => {
@@ -55,28 +61,48 @@ const FormScreen = ({ navigation }: any) => {
         setProjectDescription(e);
     };
 
+    const openDocumentPicker = async () => {
+        const file : DocumentPicker.DocumentResult = await DocumentPicker.getDocumentAsync();
+        const { type } = file;
+
+        if (type !== "cancel") {
+            const { name, uri, mimeType } = file;
+            await setAttachment({
+                name: name,
+                type: mimeType,
+                uri: uri
+            });
+        } else {
+            console.log('[ Not file selected ]');
+        }
+    };
+
+    const uploadFile = (): FormData => {
+        const formData = new FormData();
+        formData.append('attachment', attachment as any);
+        return formData;
+    }
+
     const onSubmit = async () => {
         let project: Project = await {
-
             name: projectName,
             description: projectDescription,
             autor: autorName + " " + autorFirstName,
             autorEmail: autorEmail,
-            attachments: []
+            attachments: attachment
         };
 
-        axiosInstance.post('/newProjectIdea', {
-            project: project
-        })
+        let file: FormData = uploadFile();
+
+        SubmitFormDataService(file, project)
          .then((res) => {
-             console.log("[- Request Status -] - " + res.status);
-             console.log("[- Request Datas -] - " + JSON.stringify(res.data));
+             console.log('[ AXIOS RESPONSE ]', res);
+
+             if (res.requestFinishedWithSuccess) {
+                showToast();
+             }
          })
          .catch((error) => console.log(error));
-
-        console.log(project);
-
-        showToast();
     };
 
     const showToast = () => {
@@ -124,7 +150,8 @@ const FormScreen = ({ navigation }: any) => {
         <>
             <View style={ styles.container }>
                 <SafeAreaView>
-                    <View style={ styles.formContainer }>
+                    {/* <View style={ styles.formContainer }> */}
+                    <View>
                         <ScrollView>
                             <View style={ styles.formTitleContainer }>
                                 <Text style={ styles.formTitle }>
@@ -135,9 +162,9 @@ const FormScreen = ({ navigation }: any) => {
                                 { 
                                     inputs.map((input: any, index: number) => {
                                         return (
-                                            <>
+                                            <View key={ index }>
                                                 <Text style={ styles.fields }>{ input.field }</Text>
-                                                <TextInput 
+                                                <TextInput
                                                     style={ index === inputs.length - 1 ? styles.textArea : styles.input } 
                                                     value={ input.value } 
                                                     onChangeText={ input.function } 
@@ -147,20 +174,28 @@ const FormScreen = ({ navigation }: any) => {
                                                     multiline={ index === inputs.length - 1 ? true : false }
                                                     numberOfLines={ index === inputs.length -1 ? 10 : 0 }
                                                 />
-                                            </>
+                                            </View>
                                         );
                                     })
                                 }
+                                <Text style={ styles.file }>{ attachment.name.length > 0 ? attachment.name : "Aucun fichier n'est sélectionné" }</Text>
+                                <TouchableOpacity onPress={ openDocumentPicker }>
+                                    <View style={ styles.shareFileButton }>
+                                        <Text style={ styles.shareFileButtonContent }>
+                                            Partager un fichier
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={onSubmit}>
+                                    <View style={ styles.submitButton }>
+                                        <Text style={ styles.submitButtonContent }>
+                                            Envoyer
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
                             </View>
                         </ScrollView>        
                     </View>
-                    <TouchableOpacity onPress={onSubmit}>
-                        <View style={ styles.submitButton }>
-                            <Text style={ styles.submitButtonContent }>
-                                Envoyer
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
                 </SafeAreaView>
             </View>
         </>
@@ -171,14 +206,14 @@ const styles = StyleSheet.create({
     container: {
         width: "100%",
         height: "100%",
-        backgroundColor: "#ffffff"
+        backgroundColor: "#000000"
     },
     formContainer : {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         margin: 10,
-        height: "90%",
+        height: "95%",
         borderRadius: 10,
         backgroundColor: "#000000"
     },
@@ -188,9 +223,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         width: "100%",
-        marginTop: 10,
-        borderWidth: 4,
-        borderColor: "green"
+        marginTop: 10
     },
     formTitle: {
         color: "#ffffff",
@@ -231,20 +264,43 @@ const styles = StyleSheet.create({
         marginLeft: 22,
         marginTop: 20
     },
-    submitButton: {
+    file: {
+        margin: 20,
+        alignSelf: 'center',
+        color: "#ffffff"
+    },
+    shareFileButton: {
         display: 'flex',
         justifyContent: 'center',
         width: "95%",
         marginLeft: "auto",
         marginRight: "auto",
         height: 50,
-        backgroundColor: "#15151c",
+        backgroundColor: "#ffffff",
+        padding: 7,
+        alignItems: 'center',
+        borderRadius: 10
+    },
+    shareFileButtonContent: {
+        color: "#000000",
+        fontWeight: "700"
+    },
+    submitButton: {
+        display: 'flex',
+        justifyContent: 'center',
+        width: "95%",
+        marginLeft: "auto",
+        marginRight: "auto",
+        marginBottom: 20,
+        marginTop: 20,
+        height: 50,
+        backgroundColor: "#ffffff",
         padding: 7,
         alignItems: 'center',
         borderRadius: 10
     },
     submitButtonContent: {
-        color: "#ffffff",
+        color: "#000000",
         fontWeight: "700"
     }
 });
