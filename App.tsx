@@ -28,9 +28,9 @@ export default function App() {
     <>
       <NavigationContainer>
         <Stack.Navigator>
-          {/* <Stack.Screen name='Home' component={ HomeScreen } options={{ headerShown: false }} /> */}
+          <Stack.Screen name='Home' component={ HomeScreen } options={{ headerShown: false }} />
           <Stack.Screen name='Form' component={ FormScreen } options={{ headerShown: false }} />
-          <Stack.Screen name='Home' component={ ThanksScreen } options={{ headerShown: false }} />
+          <Stack.Screen name='Thanks' component={ ThanksScreen } options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />
