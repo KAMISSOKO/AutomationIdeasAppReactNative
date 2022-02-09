@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   StyleSheet, 
   Text, 
@@ -28,6 +28,7 @@ import { SubmitFormDataService } from '../services/SubmitFormDataService';
 // Form variables
 import * as formVariables from "../exports/formVariables";
 import { Attachment } from '../interfaces/Attachment';
+import Loader from '../components/Loader';
 
 const FormScreen = ({ navigation }: any) => {
     const [autorName, setAutorName] = useState<string>("");
@@ -40,6 +41,7 @@ const FormScreen = ({ navigation }: any) => {
         type: "",
         uri: ""
     });
+    const [load, setLoad] = useState<boolean>(false);
 
     const onAutorNameChange = (e: React.SetStateAction<string>) => {
         setAutorName(e);
@@ -84,6 +86,8 @@ const FormScreen = ({ navigation }: any) => {
     }
 
     const onSubmit = async () => {
+        await setLoad(true);
+
         let project: Project = await {
             name: projectName,
             description: projectDescription,
@@ -99,7 +103,11 @@ const FormScreen = ({ navigation }: any) => {
              console.log('[ AXIOS RESPONSE ]', res);
 
              if (res.requestFinishedWithSuccess) {
+                setLoad(false);
                 showToast();
+                setTimeout(() => {
+                    navigation.navigate("Thanks");
+                }, 4000)
              }
          })
          .catch((error) => console.log(error));
@@ -146,58 +154,70 @@ const FormScreen = ({ navigation }: any) => {
         },
     ];
 
+    // useEffect(() => {
+    //     if (load) {
+    //         setLoad(false);
+    //     }
+    // }, [load]);
+
     return (
         <>
-            <View style={ styles.container }>
-                <SafeAreaView>
-                    {/* <View style={ styles.formContainer }> */}
-                    <View>
-                        <ScrollView>
-                            <View style={ styles.formTitleContainer }>
-                                <Text style={ styles.formTitle }>
-                                    Créer une idée d'automatisation
-                                </Text>
-                            </View>
+            {
+                load ? (
+                    <Loader />
+                ) : (
+                    <View style={ styles.container }>
+                        <SafeAreaView>
+                            {/* <View style={ styles.formContainer }> */}
                             <View>
-                                { 
-                                    inputs.map((input: any, index: number) => {
-                                        return (
-                                            <View key={ index }>
-                                                <Text style={ styles.fields }>{ input.field }</Text>
-                                                <TextInput
-                                                    style={ index === inputs.length - 1 ? styles.textArea : styles.input } 
-                                                    value={ input.value } 
-                                                    onChangeText={ input.function } 
-                                                    placeholder={ input.placeholder }
-                                                    placeholderTextColor="#8b959e" 
-                                                    focusable={true}
-                                                    multiline={ index === inputs.length - 1 ? true : false }
-                                                    numberOfLines={ index === inputs.length -1 ? 10 : 0 }
-                                                />
+                                <ScrollView>
+                                    <View style={ styles.formTitleContainer }>
+                                        <Text style={ styles.formTitle }>
+                                            Créer une idée d'automatisation
+                                        </Text>
+                                    </View>
+                                    <View>
+                                        { 
+                                            inputs.map((input: any, index: number) => {
+                                                return (
+                                                    <View key={ index }>
+                                                        <Text style={ styles.fields }>{ input.field }</Text>
+                                                        <TextInput
+                                                            style={ index === inputs.length - 1 ? styles.textArea : styles.input } 
+                                                            value={ input.value } 
+                                                            onChangeText={ input.function } 
+                                                            placeholder={ input.placeholder }
+                                                            placeholderTextColor="#8b959e" 
+                                                            focusable={true}
+                                                            multiline={ index === inputs.length - 1 ? true : false }
+                                                            numberOfLines={ index === inputs.length -1 ? 10 : 0 }
+                                                        />
+                                                    </View>
+                                                );
+                                            })
+                                        }
+                                        <Text style={ styles.file }>{ attachment.name.length > 0 ? attachment.name : "Aucun fichier n'est sélectionné" }</Text>
+                                        <TouchableOpacity onPress={ openDocumentPicker }>
+                                            <View style={ styles.shareFileButton }>
+                                                <Text style={ styles.shareFileButtonContent }>
+                                                    Partager un fichier
+                                                </Text>
                                             </View>
-                                        );
-                                    })
-                                }
-                                <Text style={ styles.file }>{ attachment.name.length > 0 ? attachment.name : "Aucun fichier n'est sélectionné" }</Text>
-                                <TouchableOpacity onPress={ openDocumentPicker }>
-                                    <View style={ styles.shareFileButton }>
-                                        <Text style={ styles.shareFileButtonContent }>
-                                            Partager un fichier
-                                        </Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={onSubmit}>
+                                            <View style={ styles.submitButton }>
+                                                <Text style={ styles.submitButtonContent }>
+                                                    Envoyer
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
                                     </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={onSubmit}>
-                                    <View style={ styles.submitButton }>
-                                        <Text style={ styles.submitButtonContent }>
-                                            Envoyer
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
+                                </ScrollView>        
                             </View>
-                        </ScrollView>        
+                        </SafeAreaView>
                     </View>
-                </SafeAreaView>
-            </View>
+                )
+            }
         </>
     );
 }

@@ -7,6 +7,7 @@ import Toast from 'react-native-toast-message';
 // Screens imports 
 import HomeScreen from './src/screens/Home.Screen';
 import FormScreen from './src/screens/Form.Screen';
+import ThanksScreen from './src/screens/Thanks.Screen';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,8 +28,9 @@ export default function App() {
     <>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name='Home' component={ HomeScreen } options={{ headerShown: false }} />
+          {/* <Stack.Screen name='Home' component={ HomeScreen } options={{ headerShown: false }} /> */}
           <Stack.Screen name='Form' component={ FormScreen } options={{ headerShown: false }} />
+          <Stack.Screen name='Home' component={ ThanksScreen } options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />
